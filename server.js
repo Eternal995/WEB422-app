@@ -5,7 +5,7 @@
  *  (including web sites) or distributed to other students.
  *
  *  Name: Yongda Long Student ID: 172800211 Date: Jan 15, 2023
- *  Cyclic Link:
+ *  Cyclic Link: https://frantic-eel-bonnet.cyclic.app
  *
  ********************************************************************************/
 
@@ -13,15 +13,19 @@
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
-const app = express();
-const HTTP_PORT = process.env.PORT || 8080;
 const cors = require("cors");
+
 const MoviesDB = require("./modules/moviesDB.js");
-const db = new MoviesDB();
 require("dotenv").config();
 
-app.use(bodyParser.json());
+const app = express();
+const db = new MoviesDB();
+
+const HTTP_PORT = process.env.PORT || 8080;
+
 app.use(cors());
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 
@@ -34,6 +38,7 @@ app.get("/home", (req, res) => {
   res.json({ message: "API Listening" });
 });
 
+// Movies API
 app.post("/api/movies", (req, res) => {
   db.addNewMovie(req.body)
     .then((data) => {
@@ -97,7 +102,7 @@ app.use((req, res) => {
 // Initialize
 db.initialize(process.env.MONGODB_CONN_STRING)
   .then(() => {
-    app.listen(HTTP_PORT, () => {
+    app.listen(HTTP_PORT, function () {
       console.log(`server listening on: ${HTTP_PORT}`);
     });
   })
